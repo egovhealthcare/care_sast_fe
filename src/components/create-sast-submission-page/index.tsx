@@ -150,7 +150,7 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
       }
 
       navigate(
-        `/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/sast-submissions`
+        `/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/sastSubmissions`
       );
     },
     onError: (error) => {
@@ -199,7 +199,7 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
             variant="outline"
             onClick={() => {
               navigate(
-                `/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/sast-submissions`
+                `/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/sastSubmissions`
               );
             }}
           >
