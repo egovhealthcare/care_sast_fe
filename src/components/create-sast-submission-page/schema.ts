@@ -16,7 +16,6 @@ const optionalIsoDateSchema = z
 const optionalStringSchema = z.string().optional().or(z.literal(""));
 
 export const sastSubmissionPayloadFormSchema = z.object({
-  hosp_code: z.string().min(1, "Hospital code is required"),
   patient_name: z.string().min(1, "Patient name is required"),
   age: z.coerce.number().int().nonnegative("Age must be 0 or greater"),
   age_time: z.enum(SAST_AGE_TIME_CHOICES),

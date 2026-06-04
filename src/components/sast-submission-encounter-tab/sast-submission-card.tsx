@@ -119,7 +119,6 @@ const SastSubmissionCard: FC<SastSubmissionCardProps> = ({ submission }) => {
                   </h4>
                   <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 space-y-1">
                     <div>Name: {details.payload.patient_name}</div>
-                    <div>Hospital code: {details.payload.hosp_code}</div>
                     <div>Mobile: {details.payload.mobile}</div>
                     <div>DOA: {formatDate(details.payload.doa)}</div>
                   </div>

@@ -37,7 +37,6 @@ export type CreateSastSubmissionPageProps = {
 };
 
 const emptyPayload: SastSubmissionPayloadPrefill = {
-  hosp_code: "",
   patient_name: "",
   age: 0,
   age_time: "Years",
@@ -98,12 +97,6 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
     enabled: !!encounterId,
   });
 
-  const { data: healthFacility } = useQuery({
-    queryKey: ["healthFacility", facilityId],
-    queryFn: () => apis.healthFacility.get(facilityId),
-    enabled: !!facilityId,
-  });
-
   const { data: abhaNumber } = useQuery({
     queryKey: ["abhaNumber", patientId],
     queryFn: () => apis.abhaNumber.get(patientId),
@@ -123,10 +116,10 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
         patientId,
         encounterId,
         encounter,
-        { healthFacility, abhaNumber }
+        { abhaNumber }
       )
     );
-  }, [encounter, healthFacility, abhaNumber, facilityId, patientId, encounterId, form]);
+  }, [encounter, abhaNumber, facilityId, patientId, encounterId, form]);
 
   useEffect(() => {
     if (!abhaNumber || hasMergedAbha.current || !hasPrefilledEncounter.current) {
@@ -137,16 +130,6 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
     const payload = form.getValues("payload");
     form.setValue("payload", mergeAbhaIntoPayload(payload, abhaNumber));
   }, [abhaNumber, form]);
-
-  useEffect(() => {
-    if (!healthFacility || !hasPrefilledEncounter.current) {
-      return;
-    }
-
-    if (!form.getValues("payload.hosp_code")) {
-      form.setValue("payload.hosp_code", healthFacility.hf_id);
-    }
-  }, [healthFacility, form]);
 
   const { mutate: createSubmission, isPending } = useMutation({
     mutationFn: apis.sastSubmission.create,

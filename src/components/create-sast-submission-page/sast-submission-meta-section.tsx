@@ -43,12 +43,6 @@ export function SastSubmissionMetaSection({
             label="Health scheme"
             required
           />
-          <SastFormTextField
-            form={form}
-            name="payload.hosp_code"
-            label="Hospital code"
-            required
-          />
         </CardContent>
       </Card>
     </div>

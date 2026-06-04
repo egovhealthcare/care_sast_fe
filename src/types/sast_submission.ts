@@ -5,7 +5,6 @@ export type SASTSubmissionStatus =
   | "completed";
 
 export interface SASTSubmissionPayload {
-  hosp_code: string;
   patient_name: string;
   age: number;
   age_time: string;

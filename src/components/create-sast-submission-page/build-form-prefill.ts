@@ -2,7 +2,6 @@ import { computePatientAge, toIsoDateOnly } from "@/lib/patient-age";
 import { AbhaNumber } from "@/types/abha_number";
 import { OrganizationParent, OrganizationRead } from "@/types/base";
 import { EncounterClass, EncounterRetrieve } from "@/types/encounter";
-import { HealthFacility } from "@/types/health_facility";
 import { PatientRetrieve } from "@/types/patient";
 import { format } from "date-fns";
 
@@ -115,7 +114,6 @@ function resolveGeoFromOrganization(
 function mapPatientPayload(
   patient: PatientRetrieve,
   encounter: EncounterRetrieve,
-  healthFacility?: HealthFacility,
   abhaNumber?: AbhaNumber
 ): SastSubmissionPayloadPrefill {
   const { age, age_time } = computePatientAge(
@@ -127,7 +125,6 @@ function mapPatientPayload(
   const today = format(new Date(), "yyyy-MM-dd");
 
   return {
-    hosp_code: healthFacility?.hf_id ?? "",
     patient_name: patient.name,
     age,
     age_time,
@@ -172,7 +169,6 @@ export function buildSastSubmissionFormDefaults(
   encounterId: string,
   encounter: EncounterRetrieve,
   options?: {
-    healthFacility?: HealthFacility;
     abhaNumber?: AbhaNumber;
   }
 ): CreateSastSubmissionFormValues {
@@ -187,7 +183,6 @@ export function buildSastSubmissionFormDefaults(
     payload: mapPatientPayload(
       patient,
       encounter,
-      options?.healthFacility,
       options?.abhaNumber
     ) as CreateSastSubmissionFormValues["payload"],
   };
