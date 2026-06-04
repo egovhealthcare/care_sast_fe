@@ -53,7 +53,7 @@ export function SastSubmissionPatientSection({
           <SastFormTextField
             form={form}
             name="payload.prt_pa_id"
-            label="PRT PA ID"
+            label="PRT PA ID (Aadhaar)"
             required
           />
           <SastFormTextField

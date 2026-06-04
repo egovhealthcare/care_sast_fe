@@ -147,7 +147,7 @@ function mapPatientPayload(
     date_reporting_nwh: today,
     patient_ip_no:
       encounter.external_identifier ?? encounter.id ?? patient.id,
-    prt_pa_id: patient.id,
+    prt_pa_id: "",
     ip_op: IP_OP_BY_ENCOUNTER_CLASS[encounter.encounter_class] ?? "",
     abha_id: abhaNumber?.health_id ?? abhaNumber?.abha_number ?? "",
     abha_address: abhaNumber?.health_id ?? "",
