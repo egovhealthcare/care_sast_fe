@@ -19,6 +19,11 @@ const IP_OP_BY_ENCOUNTER_CLASS: Partial<Record<EncounterClass, string>> = {
   hh: "OP",
 };
 
+function toTenDigitMobile(phoneNumber?: string): string {
+  const digits = (phoneNumber ?? "").replace(/\D/g, "");
+  return digits.slice(-10);
+}
+
 function isOrganizationRead(
   value: OrganizationRead | Record<string, never>
 ): value is OrganizationRead {
@@ -130,7 +135,7 @@ function mapPatientPayload(
     age_time,
     dob: toIsoDateOnly(patient.date_of_birth),
     gender: patient.gender,
-    mobile: patient.phone_number,
+    mobile: toTenDigitMobile(patient.phone_number),
     email: abhaNumber?.email ?? "",
     address: patient.address ?? patient.permanent_address ?? "",
     pincode: patient.pincode != null ? String(patient.pincode) : "",
