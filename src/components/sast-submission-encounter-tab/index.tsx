@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Encounter } from "@/types/encounter";
+import { EncounterRetrieve } from "@/types/encounter";
 import { FC } from "react";
 import { GlobalStoreProvider } from "@/hooks/use-global-store";
 import { Link } from "raviger";
-import { Patient } from "@/types/patient";
+import { PatientRetrieve } from "@/types/patient";
 import SastSubmissionCard from "./sast-submission-card";
 import { SASTSubmissionListItem } from "@/types/sast_submission";
 import { apis } from "@/apis";
 import { useQuery } from "@tanstack/react-query";
 
 export type EncounterTabProps = {
-  encounter: Encounter;
-  patient: Patient;
+  encounter: EncounterRetrieve;
+  patient: PatientRetrieve;
 };
 
 const SastSubmissionEncounterTab: FC<EncounterTabProps> = ({

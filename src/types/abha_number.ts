@@ -1,4 +1,4 @@
-import { Patient } from "./patient";
+import { PatientRetrieve } from "./patient";
 
 export type AbhaNumber = {
   id: number;
@@ -22,5 +22,5 @@ export type AbhaNumber = {
   profile_photo: string | null;
   new: boolean;
   patient: string | null;
-  patient_object: Patient | null;
+  patient_object: PatientRetrieve | null;
 };

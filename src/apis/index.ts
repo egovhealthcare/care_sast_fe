@@ -7,6 +7,8 @@ import { queryString, request } from "./request";
 
 import { AbhaNumber } from "@/types/abha_number";
 import { Coding } from "@/types/base";
+import { EncounterRetrieve } from "@/types/encounter";
+import { PatientRetrieve, PatientRetrieveParams } from "@/types/patient";
 import { HealthFacility } from "@/types/health_facility";
 import { PaginatedResponse } from "./types";
 import {
@@ -37,6 +39,20 @@ export const apis = {
 
     get: async (id: string) => {
       return await request<FileUploadModel>(`/api/v1/files/${id}/`);
+    },
+  },
+
+  patient: {
+    get: async (id: string, query?: PatientRetrieveParams) => {
+      return await request<PatientRetrieve>(
+        `/api/v1/patient/${id}/` + queryString(query)
+      );
+    },
+  },
+
+  encounter: {
+    get: async (id: string) => {
+      return await request<EncounterRetrieve>(`/api/v1/encounter/${id}/`);
     },
   },
 
