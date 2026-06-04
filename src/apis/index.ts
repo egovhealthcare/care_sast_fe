@@ -17,7 +17,18 @@ import {
   SASTSubmissionListParams,
   SASTSubmissionRetrieve,
 } from "@/types/sast_submission";
-import { User } from "@/types/user";
+import {
+  SASTHospitalCreateRequest,
+  SASTHospitalRetrieve,
+  SASTHospitalUpdateRequest,
+} from "@/types/sast_hospital";
+import {
+  SASTUserCreateRequest,
+  SASTUserListParams,
+  SASTUserRetrieve,
+  SASTUserUpdateRequest,
+} from "@/types/sast_user";
+import { RetrieveUser, User } from "@/types/user";
 
 export const apis = {
   file: {
@@ -106,6 +117,12 @@ export const apis = {
     },
   },
 
+  currentUser: {
+    get: async () => {
+      return await request<RetrieveUser>("/api/v1/users/getcurrentuser/");
+    },
+  },
+
   sastSubmission: {
     list: async (query?: SASTSubmissionListParams) => {
       return await request<PaginatedResponse<SASTSubmissionListItem>>(
@@ -130,6 +147,62 @@ export const apis = {
           body: JSON.stringify(body),
         }
       );
+    },
+  },
+
+  sastHospital: {
+    get: async (id: string) => {
+      return await request<SASTHospitalRetrieve>(
+        `/api/care_sast/hospital/${id}/`
+      );
+    },
+
+    create: async (body: SASTHospitalCreateRequest) => {
+      return await request<SASTHospitalRetrieve>("/api/care_sast/hospital/", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+    },
+
+    update: async (id: string, body: SASTHospitalUpdateRequest) => {
+      return await request<SASTHospitalRetrieve>(
+        `/api/care_sast/hospital/${id}/`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+        }
+      );
+    },
+  },
+
+  sastUser: {
+    list: async (query?: SASTUserListParams) => {
+      return await request<PaginatedResponse<SASTUserRetrieve>>(
+        "/api/care_sast/user/" +
+          queryString(
+            query as Record<string, string | number | boolean> | undefined
+          )
+      );
+    },
+
+    create: async (body: SASTUserCreateRequest) => {
+      return await request<SASTUserRetrieve>("/api/care_sast/user/", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+    },
+
+    update: async (id: string, body: SASTUserUpdateRequest) => {
+      return await request<SASTUserRetrieve>(`/api/care_sast/user/${id}/`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
+    },
+
+    delete: async (id: string) => {
+      return await request<void>(`/api/care_sast/user/${id}/`, {
+        method: "DELETE",
+      });
     },
   },
 };

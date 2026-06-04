@@ -5,7 +5,11 @@ const manifest = {
   plugin: "care_sast",
   routes,
   extends: [],
-  components: {},
+  components: {
+    FacilityHomeActions: lazy(
+      () => import("./components/pluggables/facility-home-actions")
+    ),
+  },
   navItems: [],
   encounterTabs: {
     sastSubmissions: lazy(
