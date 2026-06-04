@@ -105,3 +105,13 @@ export const createSastSubmissionFormSchema = z.object({
 export type CreateSastSubmissionFormValues = z.infer<
   typeof createSastSubmissionFormSchema
 >;
+
+export type SastSubmissionPayloadFormValues = z.infer<
+  typeof sastSubmissionPayloadFormSchema
+>;
+
+/** Payload fields populated before file inputs are set */
+export type SastSubmissionPayloadPrefill = Omit<
+  SastSubmissionPayloadFormValues,
+  "upload_file1_file" | "upload_file2_file" | "photo_file"
+>;
