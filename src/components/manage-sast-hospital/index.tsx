@@ -19,13 +19,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -42,9 +35,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SASTUserRetrieve } from "@/types/sast_user";
 import { User } from "@/types/user";
+import Autocomplete from "@/components/ui/autocomplete";
 import { apis } from "@/apis";
 import { cn, toast } from "@/lib/utils";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 interface ManageSastHospitalProps {
   facility: FacilityRetrieve;
@@ -309,7 +303,7 @@ function ManageSastUsers({ facility, hospitalId }: ManageSastUsersProps) {
       {isAdding && (
         <AddSastUserForm
           hospitalId={hospitalId}
-          facilityUsers={facilityUsers?.results}
+          facilityId={facility.id}
           onDone={() => setIsAdding(false)}
         />
       )}
@@ -342,19 +336,43 @@ function ManageSastUsers({ facility, hospitalId }: ManageSastUsersProps) {
 
 interface AddSastUserFormProps {
   hospitalId: string;
-  facilityUsers?: User[];
+  facilityId: string;
   onDone: () => void;
+}
+
+function formatCareUserLabel(user: User) {
+  const name = `${user.first_name} ${user.last_name}`.trim();
+  return name ? `${name} (@${user.username})` : `@${user.username}`;
 }
 
 function AddSastUserForm({
   hospitalId,
-  facilityUsers,
+  facilityId,
   onDone,
 }: AddSastUserFormProps) {
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState("");
+  const [userSearch, setUserSearch] = useState("");
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+
+  const { data: facilityUsers } = useQuery({
+    queryKey: ["facility-users", facilityId, userSearch],
+    queryFn: () =>
+      apis.user.facilityUsers(facilityId, {
+        search_text: userSearch || undefined,
+      }),
+    enabled: !!facilityId,
+  });
+
+  const careUserOptions = useMemo(
+    () =>
+      facilityUsers?.results?.map((user) => ({
+        value: user.id,
+        label: formatCareUserLabel(user),
+      })) ?? [],
+    [facilityUsers]
+  );
 
   const createUserMutation = useMutation({
     mutationFn: () =>
@@ -377,18 +395,16 @@ function AddSastUserForm({
 
       <div className="space-y-1.5">
         <Label htmlFor="sast-user">CARE User</Label>
-        <Select value={selectedUser} onValueChange={setSelectedUser}>
-          <SelectTrigger id="sast-user" className="bg-white">
-            <SelectValue placeholder="Select a user" />
-          </SelectTrigger>
-          <SelectContent>
-            {facilityUsers?.map((user) => (
-              <SelectItem key={user.id} value={user.id}>
-                {user.first_name} {user.last_name} (@{user.username})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Autocomplete
+          options={careUserOptions}
+          value={selectedUser}
+          onChange={setSelectedUser}
+          onSearch={setUserSearch}
+          placeholder="Select a user"
+          noOptionsMessage="No users found"
+          popoverClassName="bg-white"
+          data-cy="sast-user-select"
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
