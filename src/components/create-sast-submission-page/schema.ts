@@ -2,6 +2,43 @@ import { z } from "zod";
 
 export const SAST_AGE_TIME_CHOICES = ["Years", "Months", "Days"] as const;
 
+export const SAST_FAMILY_TYPE_CHOICES = [
+  "GENERAL",
+  "BPL",
+  "APL",
+  "MIGRANT LABOUR",
+] as const;
+
+export const SAST_CASTE_CHOICES = [
+  "GENERAL",
+  "SC",
+  "ST",
+  "OBC",
+  "OTHER",
+] as const;
+
+export const SAST_MARITAL_STATUS_CHOICES = [
+  "SINGLE",
+  "MARRIED",
+  "DIVORCED",
+  "WIDOWED",
+  "SEPERATED",
+] as const;
+
+const PDF_MIME_TYPE = "application/pdf";
+
+const pdfFileSchema = z
+  .instanceof(File, { message: "Required" })
+  .refine((file) => file.type === PDF_MIME_TYPE, {
+    message: "Only PDF files are allowed.",
+  });
+
+const imageFileSchema = z
+  .instanceof(File, { message: "Required" })
+  .refine((file) => file.type.startsWith("image/"), {
+    message: "Only image files are allowed.",
+  });
+
 const isoDateSchema = z
   .string()
   .min(1, "Required")
@@ -23,14 +60,24 @@ export const sastSubmissionPayloadFormSchema = z.object({
   gender: z.string().min(1, "Gender is required"),
   family_head_name: z.string().min(1, "Family head name is required"),
   payer_zone: z.string().min(1, "Payer zone is required"),
-  family_type: z.string().min(1, "Family type is required"),
+  family_type: z.enum(SAST_FAMILY_TYPE_CHOICES, {
+    message:
+      "Family Type should be either GENERAL,BPL,APL or MIGRANT LABOUR only.",
+  }),
   family_card_type: z.string().min(1, "Family card type is required"),
-  family_card_no: z.string().min(1, "Family card number is required"),
-  caste: z.string().min(1, "Caste is required"),
+  family_card_no: z
+    .string()
+    .regex(/^\d{12}$/, "Please Enter Valid Family Card No of 12 digits."),
+  caste: z.enum(SAST_CASTE_CHOICES, {
+    message: "Caste should be either GENERAL,SC,ST,OBC or OTHER only.",
+  }),
   relation_with_head: z.string().min(1, "Relation with head is required"),
   card_issue_date: optionalIsoDateSchema,
   date_reporting_nwh: isoDateSchema,
-  marital_status: z.string().min(1, "Marital status is required"),
+  marital_status: z.enum(SAST_MARITAL_STATUS_CHOICES, {
+    message:
+      "Marital Status should be either SINGLE,MARRIED,DIVORCED,WIDOWED or SEPERATED only.",
+  }),
   is_child: z.boolean().optional().nullable(),
   mobile: z.string().min(1, "Mobile is required"),
   email: optionalStringSchema,
@@ -48,8 +95,8 @@ export const sastSubmissionPayloadFormSchema = z.object({
   date_of_referral: optionalIsoDateSchema,
   referral_id: optionalStringSchema,
   referral_remarks: optionalStringSchema,
-  upload_file1_file: z.instanceof(File, { message: "Upload file 1 is required" }),
-  upload_file2_file: z.instanceof(File, { message: "Upload file 2 is required" }),
+  upload_file1_file: pdfFileSchema,
+  upload_file2_file: pdfFileSchema,
   upload_file1_remarks: optionalStringSchema,
   upload_file2_remarks: optionalStringSchema,
   smart_card_verified_by: optionalStringSchema,
@@ -57,7 +104,7 @@ export const sastSubmissionPayloadFormSchema = z.object({
   designation: optionalStringSchema,
   uid_number: optionalStringSchema,
   kgid: optionalStringSchema,
-  photo_file: z.instanceof(File, { message: "Photo is required" }),
+  photo_file: imageFileSchema,
   family_head_dob: optionalIsoDateSchema,
   national_identity_type: optionalStringSchema,
   national_identity_no: optionalStringSchema,
@@ -112,5 +159,15 @@ export type SastSubmissionPayloadFormValues = z.infer<
 /** Payload fields populated before file inputs are set */
 export type SastSubmissionPayloadPrefill = Omit<
   SastSubmissionPayloadFormValues,
-  "upload_file1_file" | "upload_file2_file" | "photo_file"
->;
+  | "upload_file1_file"
+  | "upload_file2_file"
+  | "photo_file"
+  | "family_type"
+  | "caste"
+  | "marital_status"
+> & {
+  // Dropdown fields start unselected (""), but validation rejects empty values.
+  family_type: SastSubmissionPayloadFormValues["family_type"] | "";
+  caste: SastSubmissionPayloadFormValues["caste"] | "";
+  marital_status: SastSubmissionPayloadFormValues["marital_status"] | "";
+};

@@ -10,6 +10,7 @@ import {
 import {
   CreateSastSubmissionFormValues,
   SAST_AGE_TIME_CHOICES,
+  SAST_MARITAL_STATUS_CHOICES,
 } from "./schema";
 
 interface SastSubmissionPatientSectionProps {
@@ -83,11 +84,12 @@ export function SastSubmissionPatientSection({
             label="Gender"
             required
           />
-          <SastFormTextField
+          <SastFormSelectField
             form={form}
             name="payload.marital_status"
             label="Marital status"
             required
+            options={SAST_MARITAL_STATUS_CHOICES}
           />
           <SastFormCheckboxField
             form={form}

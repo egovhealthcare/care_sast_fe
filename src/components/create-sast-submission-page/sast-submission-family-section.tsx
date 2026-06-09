@@ -6,7 +6,11 @@ import {
   SastFormSelectField,
   SastFormTextField,
 } from "./sast-submission-field";
-import { CreateSastSubmissionFormValues } from "./schema";
+import {
+  CreateSastSubmissionFormValues,
+  SAST_CASTE_CHOICES,
+  SAST_FAMILY_TYPE_CHOICES,
+} from "./schema";
 import { getPayerZones } from "./geo";
 
 interface SastSubmissionFamilySectionProps {
@@ -67,11 +71,12 @@ export function SastSubmissionFamilySection({
             }
             disabled={!selectedState}
           />
-          <SastFormTextField
+          <SastFormSelectField
             form={form}
             name="payload.family_type"
             label="Family type"
             required
+            options={SAST_FAMILY_TYPE_CHOICES}
           />
           <SastFormTextField
             form={form}
@@ -91,11 +96,12 @@ export function SastSubmissionFamilySection({
             label="Card issue date"
             type="date"
           />
-          <SastFormTextField
+          <SastFormSelectField
             form={form}
             name="payload.caste"
             label="Caste"
             required
+            options={SAST_CASTE_CHOICES}
           />
           <SastFormTextField
             form={form}

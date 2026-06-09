@@ -74,12 +74,14 @@ export function SastSubmissionReferralDocumentsSection({
             name="payload.upload_file1_file"
             label="Upload file 1"
             required
+            accept="application/pdf"
           />
           <SastFormFileField
             form={form}
             name="payload.upload_file2_file"
             label="Upload file 2"
             required
+            accept="application/pdf"
           />
           <SastFormTextField
             form={form}
