@@ -38,11 +38,11 @@ const isDebugEnabled = (): boolean =>
       window as unknown as {
         __CARE_PLUGIN_RUNTIME__?: {
           meta?: {
-            care_abdm_fe?: { config?: { debug?: boolean } };
+            care_sast_fe?: { config?: { debug?: boolean } };
           };
         };
       }
-    ).__CARE_PLUGIN_RUNTIME__?.meta?.care_abdm_fe?.config?.debug,
+    ).__CARE_PLUGIN_RUNTIME__?.meta?.care_sast_fe?.config?.debug,
   );
 
 const DebugJsonSection: FC<{ title: string; data: unknown }> = ({
