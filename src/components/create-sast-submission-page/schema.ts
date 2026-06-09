@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export const SAST_AGE_TIME_CHOICES = ["Years", "Months", "Days"] as const;
 
+export const SAST_GENDER_CHOICES = ["Male", "Female", "Others"] as const;
+
 export const SAST_FAMILY_TYPE_CHOICES = [
   "GENERAL",
   "BPL",
@@ -23,6 +25,26 @@ export const SAST_MARITAL_STATUS_CHOICES = [
   "DIVORCED",
   "WIDOWED",
   "SEPERATED",
+] as const;
+
+export const SAST_RELATION_WITH_HEAD_CHOICES = [
+  "SELF",
+  "SPOUSE",
+  "FATHER",
+  "MOTHER",
+  "SON",
+  "DAUGHTER",
+  "BROTHER",
+  "SISTER",
+  "GRANDFATHER",
+  "GRANDMOTHER",
+  "GRANDSON",
+  "GRANDDAUGHTER",
+  "FATHER IN LAW",
+  "MOTHER IN LAW",
+  "SON IN LAW",
+  "DAUGHTER IN LAW",
+  "OTHER",
 ] as const;
 
 const PDF_MIME_TYPE = "application/pdf";
@@ -57,7 +79,9 @@ export const sastSubmissionPayloadFormSchema = z.object({
   age: z.coerce.number().int().nonnegative("Age must be 0 or greater"),
   age_time: z.enum(SAST_AGE_TIME_CHOICES),
   dob: isoDateSchema,
-  gender: z.string().min(1, "Gender is required"),
+  gender: z.enum(SAST_GENDER_CHOICES, {
+    message: "Gender should be in Male,Female or Others only.",
+  }),
   family_head_name: z.string().min(1, "Family head name is required"),
   payer_zone: z.string().min(1, "Payer zone is required"),
   family_type: z.enum(SAST_FAMILY_TYPE_CHOICES, {
@@ -71,7 +95,9 @@ export const sastSubmissionPayloadFormSchema = z.object({
   caste: z.enum(SAST_CASTE_CHOICES, {
     message: "Caste should be either GENERAL,SC,ST,OBC or OTHER only.",
   }),
-  relation_with_head: z.string().min(1, "Relation with head is required"),
+  relation_with_head: z.enum(SAST_RELATION_WITH_HEAD_CHOICES, {
+    message: "Relation with head is required",
+  }),
   card_issue_date: optionalIsoDateSchema,
   date_reporting_nwh: isoDateSchema,
   marital_status: z.enum(SAST_MARITAL_STATUS_CHOICES, {
@@ -162,12 +188,16 @@ export type SastSubmissionPayloadPrefill = Omit<
   | "upload_file1_file"
   | "upload_file2_file"
   | "photo_file"
+  | "gender"
   | "family_type"
   | "caste"
   | "marital_status"
+  | "relation_with_head"
 > & {
   // Dropdown fields start unselected (""), but validation rejects empty values.
+  gender: SastSubmissionPayloadFormValues["gender"] | "";
   family_type: SastSubmissionPayloadFormValues["family_type"] | "";
   caste: SastSubmissionPayloadFormValues["caste"] | "";
   marital_status: SastSubmissionPayloadFormValues["marital_status"] | "";
+  relation_with_head: SastSubmissionPayloadFormValues["relation_with_head"] | "";
 };

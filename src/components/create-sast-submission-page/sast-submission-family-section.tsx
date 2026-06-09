@@ -10,8 +10,8 @@ import {
   CreateSastSubmissionFormValues,
   SAST_CASTE_CHOICES,
   SAST_FAMILY_TYPE_CHOICES,
+  SAST_RELATION_WITH_HEAD_CHOICES,
 } from "./schema";
-import { getPayerZones } from "./geo";
 
 interface SastSubmissionFamilySectionProps {
   form: UseFormReturn<CreateSastSubmissionFormValues>;
@@ -20,9 +20,6 @@ interface SastSubmissionFamilySectionProps {
 export function SastSubmissionFamilySection({
   form,
 }: SastSubmissionFamilySectionProps) {
-  const selectedState = form.watch("payload.patient_state");
-  const payerZoneOptions = getPayerZones(selectedState);
-
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-3 mb-6">
@@ -48,28 +45,18 @@ export function SastSubmissionFamilySection({
             label="Family head name"
             required
           />
-          <SastFormTextField
+          <SastFormSelectField
             form={form}
             name="payload.relation_with_head"
             label="Relation with head"
             required
+            options={SAST_RELATION_WITH_HEAD_CHOICES}
           />
           <SastFormTextField
             form={form}
             name="payload.family_head_dob"
             label="Family head DOB"
             type="date"
-          />
-          <SastFormSelectField
-            form={form}
-            name="payload.payer_zone"
-            label="Payer zone"
-            required
-            options={payerZoneOptions}
-            placeholder={
-              selectedState ? "Select payer zone" : "Select a state first"
-            }
-            disabled={!selectedState}
           />
           <SastFormSelectField
             form={form}
