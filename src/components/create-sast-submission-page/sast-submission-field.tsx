@@ -122,6 +122,9 @@ type SelectFieldProps = FormProps & {
   required?: boolean;
   options: readonly string[];
   placeholder?: string;
+  disabled?: boolean;
+  /** Runs after the field value is updated, e.g. to cascade dependent fields. */
+  onSelect?: (value: string) => void;
 };
 
 export function SastFormSelectField({
@@ -131,6 +134,8 @@ export function SastFormSelectField({
   required,
   options,
   placeholder = "Select",
+  disabled,
+  onSelect,
 }: SelectFieldProps) {
   return (
     <FormField
@@ -142,7 +147,14 @@ export function SastFormSelectField({
             {label}
             {required && <span className="text-red-500 text-sm ml-0.5">*</span>}
           </FormLabel>
-          <Select value={field.value?.toString()} onValueChange={field.onChange}>
+          <Select
+            value={field.value?.toString() ?? ""}
+            onValueChange={(value) => {
+              field.onChange(value);
+              onSelect?.(value);
+            }}
+            disabled={disabled}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />

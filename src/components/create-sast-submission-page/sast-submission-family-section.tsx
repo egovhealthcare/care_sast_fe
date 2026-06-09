@@ -2,8 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UsersIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-import { SastFormTextField } from "./sast-submission-field";
+import {
+  SastFormSelectField,
+  SastFormTextField,
+} from "./sast-submission-field";
 import { CreateSastSubmissionFormValues } from "./schema";
+import { getPayerZones } from "./geo";
 
 interface SastSubmissionFamilySectionProps {
   form: UseFormReturn<CreateSastSubmissionFormValues>;
@@ -12,6 +16,9 @@ interface SastSubmissionFamilySectionProps {
 export function SastSubmissionFamilySection({
   form,
 }: SastSubmissionFamilySectionProps) {
+  const selectedState = form.watch("payload.patient_state");
+  const payerZoneOptions = getPayerZones(selectedState);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-3 mb-6">
@@ -49,11 +56,16 @@ export function SastSubmissionFamilySection({
             label="Family head DOB"
             type="date"
           />
-          <SastFormTextField
+          <SastFormSelectField
             form={form}
             name="payload.payer_zone"
             label="Payer zone"
             required
+            options={payerZoneOptions}
+            placeholder={
+              selectedState ? "Select payer zone" : "Select a state first"
+            }
+            disabled={!selectedState}
           />
           <SastFormTextField
             form={form}

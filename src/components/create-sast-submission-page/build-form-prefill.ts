@@ -9,6 +9,13 @@ import {
   CreateSastSubmissionFormValues,
   SastSubmissionPayloadPrefill,
 } from "./schema";
+import {
+  getDistrict,
+  getTaluk,
+  resolveDistrictName,
+  resolveStateName,
+  resolveTalukName,
+} from "./geo";
 
 const IP_OP_BY_ENCOUNTER_CLASS: Partial<Record<EncounterClass, string>> = {
   imp: "IP",
@@ -129,6 +136,25 @@ function mapPatientPayload(
   const geoLevels = resolveGeoFromOrganization(geo);
   const today = format(new Date(), "yyyy-MM-dd");
 
+  // Canonicalise geo names so they match the dropdown dataset, and prefer
+  // dataset codes (gateway TALUKID / district code) when available.
+  const stateName = resolveStateName(
+    abhaNumber?.state || geoLevels.stateName
+  );
+  const districtName = resolveDistrictName(
+    stateName,
+    abhaNumber?.district || geoLevels.districtName
+  );
+  const talukName = resolveTalukName(
+    stateName,
+    districtName,
+    geoLevels.talukName
+  );
+  const districtCode =
+    getDistrict(stateName, districtName)?.code || geoLevels.districtCode;
+  const talukCode =
+    getTaluk(stateName, districtName, talukName)?.id || geoLevels.talukCode;
+
   return {
     patient_name: patient.name,
     age,
@@ -140,14 +166,14 @@ function mapPatientPayload(
     address: patient.address ?? patient.permanent_address ?? "",
     pincode: patient.pincode != null ? String(patient.pincode) : "",
     patient_country: "India",
-    patient_state: abhaNumber?.state || geoLevels.stateName,
-    patient_district: abhaNumber?.district || geoLevels.districtName,
+    patient_state: stateName,
+    patient_district: districtName,
     patient_village: geoLevels.villageName,
-    patient_taluk: geoLevels.talukName,
-    district_name: abhaNumber?.district || geoLevels.districtName,
-    district_code: geoLevels.districtCode,
-    taluk_name: geoLevels.talukName,
-    taluk_code: geoLevels.talukCode,
+    patient_taluk: talukName,
+    district_name: districtName,
+    district_code: districtCode,
+    taluk_name: talukName,
+    taluk_code: talukCode,
     doa: toIsoDateOnly(encounter.period.start) || today,
     date_reporting_nwh: today,
     patient_ip_no:
@@ -197,14 +223,22 @@ export function mergeAbhaIntoPayload(
   payload: CreateSastSubmissionFormValues["payload"],
   abhaNumber: AbhaNumber
 ): CreateSastSubmissionFormValues["payload"] {
+  const patient_state = resolveStateName(
+    payload.patient_state || abhaNumber.state || ""
+  );
+  const patient_district = resolveDistrictName(
+    patient_state,
+    payload.patient_district || abhaNumber.district || ""
+  );
+
   return {
     ...payload,
     email: payload.email || abhaNumber.email || "",
     abha_id: abhaNumber.health_id || abhaNumber.abha_number || payload.abha_id,
     abha_address: abhaNumber.health_id || payload.abha_address,
-    patient_state: payload.patient_state || abhaNumber.state || "",
-    patient_district: payload.patient_district || abhaNumber.district || "",
-    district_name: payload.district_name || abhaNumber.district || "",
+    patient_state,
+    patient_district,
+    district_name: patient_district || payload.district_name,
     pincode: payload.pincode || (abhaNumber.pincode ?? ""),
     address: payload.address || abhaNumber.address || "",
   };
