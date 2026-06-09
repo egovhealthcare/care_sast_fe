@@ -32,8 +32,53 @@ interface SastSubmissionCardProps {
   submission: SASTSubmissionListItem;
 }
 
+const isDebugEnabled = (): boolean =>
+  Boolean(
+    (
+      window as unknown as {
+        __CARE_PLUGIN_RUNTIME__?: {
+          meta?: {
+            care_abdm_fe?: { config?: { debug?: boolean } };
+          };
+        };
+      }
+    ).__CARE_PLUGIN_RUNTIME__?.meta?.care_abdm_fe?.config?.debug,
+  );
+
+const DebugJsonSection: FC<{ title: string; data: unknown }> = ({
+  title,
+  data,
+}) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex w-full items-center justify-between px-0 text-sm font-semibold text-gray-900 hover:bg-transparent"
+        >
+          {title}
+          {open ? (
+            <ChevronUpIcon className="w-4 h-4" />
+          ) : (
+            <ChevronDownIcon className="w-4 h-4" />
+          )}
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <pre className="mt-2 bg-gray-50 rounded-lg p-4 text-xs text-gray-600 overflow-x-auto whitespace-pre-wrap">
+          {JSON.stringify(data, null, 2)}
+        </pre>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
 const SastSubmissionCard: FC<SastSubmissionCardProps> = ({ submission }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isDebug = isDebugEnabled();
 
   const { data: details } = useQuery({
     queryKey: ["sast-submission", submission.id],
@@ -140,23 +185,25 @@ const SastSubmissionCard: FC<SastSubmissionCardProps> = ({ submission }) => {
                 </div>
               )}
 
-              {details?.response && (
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
-                    Gateway response
-                  </h4>
-                  <div className="bg-blue-50 rounded-lg p-4 text-sm text-gray-600 space-y-1">
-                    {details.response.hmis_id && (
-                      <div>HMIS ID: {details.response.hmis_id}</div>
-                    )}
-                    {details.response.ab_ark_id && (
-                      <div>AB Ark ID: {details.response.ab_ark_id}</div>
-                    )}
-                    {details.response.patient_name && (
-                      <div>Patient: {details.response.patient_name}</div>
-                    )}
-                  </div>
-                </div>
+              {isDebug && details?.callback_response && (
+                <DebugJsonSection
+                  title="Callback response"
+                  data={details.callback_response}
+                />
+              )}
+
+              {isDebug && details?.gateway_response && (
+                <DebugJsonSection
+                  title="Gateway response"
+                  data={details.gateway_response}
+                />
+              )}
+
+              {isDebug && details?.gateway_payload && (
+                <DebugJsonSection
+                  title="Gateway payload"
+                  data={details.gateway_payload}
+                />
               )}
             </div>
           </CardContent>
@@ -167,7 +214,7 @@ const SastSubmissionCard: FC<SastSubmissionCardProps> = ({ submission }) => {
           <div className="flex flex-wrap gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1.5">
               <CalendarIcon className="w-4 h-4" />
-              <span>Created: {formatDate(submission.created_date)}</span>
+              <span>Created: {formatDate(submission.created_date ?? undefined)}</span>
             </div>
             {submission.submitted_at && (
               <div className="flex items-center gap-1.5">

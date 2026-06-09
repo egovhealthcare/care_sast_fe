@@ -129,9 +129,19 @@ interface SASTSubmissionCallbackResponse {
   gender: string | null;
 }
 
+export interface SASTSubmissionGatewayResponse {
+  Success: boolean;
+  Errors: string[];
+  Data: Record<string, unknown> | null;
+  StatusCode?: number | null;
+  RawResponse?: string | null;
+}
+
 export interface SASTSubmissionRetrieve extends SASTSubmissionListItem {
   payload: SASTSubmissionPayload | null;
   errors: string[] | null;
-  response: SASTSubmissionCallbackResponse | null;
+  gateway_payload: Record<string, unknown> | null;
+  gateway_response: SASTSubmissionGatewayResponse | null;
+  callback_response: SASTSubmissionCallbackResponse | null;
 }
 
