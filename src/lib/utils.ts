@@ -7,6 +7,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const isSastDebugEnabled = (): boolean =>
+  Boolean(
+    (
+      window as unknown as {
+        __CARE_PLUGIN_RUNTIME__?: {
+          meta?: {
+            care_sast_fe?: { config?: { debug?: boolean } };
+          };
+        };
+      }
+    ).__CARE_PLUGIN_RUNTIME__?.meta?.care_sast_fe?.config?.debug
+  );
+
 // TODO: Share sonner toast package with core.
 const defaultToastOptions = {
   position: "top-right" as ToasterProps["position"],

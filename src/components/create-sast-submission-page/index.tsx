@@ -20,6 +20,7 @@ import {
 } from "./build-form-prefill";
 import { SastSubmissionAdditionalSection } from "./sast-submission-additional-section";
 import { SastSubmissionAddressSection } from "./sast-submission-address-section";
+import { SastSubmissionDebugSection } from "./sast-submission-debug-section";
 import { SastSubmissionFamilySection } from "./sast-submission-family-section";
 import { SastSubmissionMetaSection } from "./sast-submission-meta-section";
 import { SastSubmissionPatientSection } from "./sast-submission-patient-section";
@@ -216,6 +217,7 @@ const CreateSastSubmissionPage: FC<CreateSastSubmissionPageProps> = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <SastSubmissionDebugSection facilityId={facilityId} />
             <SastSubmissionMetaSection form={form} />
             <Separator />
             <SastSubmissionPatientSection form={form} />

@@ -20,7 +20,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { FC, useMemo, useState } from "react";
-import { cn, formatDate } from "@/lib/utils";
+import { cn, formatDate, isSastDebugEnabled } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,19 +31,6 @@ import { useQuery } from "@tanstack/react-query";
 interface SastSubmissionCardProps {
   submission: SASTSubmissionListItem;
 }
-
-const isDebugEnabled = (): boolean =>
-  Boolean(
-    (
-      window as unknown as {
-        __CARE_PLUGIN_RUNTIME__?: {
-          meta?: {
-            care_sast_fe?: { config?: { debug?: boolean } };
-          };
-        };
-      }
-    ).__CARE_PLUGIN_RUNTIME__?.meta?.care_sast_fe?.config?.debug,
-  );
 
 const DebugJsonSection: FC<{ title: string; data: unknown }> = ({
   title,
@@ -78,7 +65,7 @@ const DebugJsonSection: FC<{ title: string; data: unknown }> = ({
 
 const SastSubmissionCard: FC<SastSubmissionCardProps> = ({ submission }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const isDebug = isDebugEnabled();
+  const isDebug = isSastDebugEnabled();
 
   const { data: details } = useQuery({
     queryKey: ["sast-submission", submission.id],
