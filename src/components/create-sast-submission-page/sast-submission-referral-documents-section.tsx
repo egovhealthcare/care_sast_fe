@@ -61,6 +61,11 @@ export function SastSubmissionReferralDocumentsSection({
             name="payload.insurance_code"
             label="Insurance code"
           />
+          <SastFormTextField
+            form={form}
+            name="payload.scheme_id"
+            label="Scheme ID"
+          />
         </CardContent>
       </Card>
 

@@ -112,6 +112,7 @@ export const sastSubmissionPayloadFormSchema = z.object({
   patient_country: z.string().min(1, "Country is required"),
   pincode: z.string().min(1, "Pincode is required"),
   insurance_code: optionalStringSchema,
+  scheme_id: optionalStringSchema,
   referral_type: z.string().min(1, "Referral type is required"),
   date_of_referral: optionalIsoDateSchema,
   referral_id: optionalStringSchema,

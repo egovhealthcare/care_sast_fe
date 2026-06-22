@@ -39,6 +39,7 @@ export async function mapFormToCreateRequest(
       card_issue_date: nullIfEmpty(payloadFields.card_issue_date),
       email: nullIfEmpty(payloadFields.email),
       insurance_code: nullIfEmpty(payloadFields.insurance_code),
+      scheme_id: nullIfEmpty(payloadFields.scheme_id),
       date_of_referral: nullIfEmpty(payloadFields.date_of_referral),
       referral_id: nullIfEmpty(payloadFields.referral_id),
       referral_remarks: nullIfEmpty(payloadFields.referral_remarks),

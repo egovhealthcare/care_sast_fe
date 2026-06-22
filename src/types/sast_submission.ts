@@ -33,6 +33,7 @@ export interface SASTSubmissionPayload {
   patient_country: string;
   pincode: string;
   insurance_code?: string | null;
+  scheme_id?: string | null;
   referral_type: string;
   date_of_referral?: string | null;
   referral_id?: string | null;
