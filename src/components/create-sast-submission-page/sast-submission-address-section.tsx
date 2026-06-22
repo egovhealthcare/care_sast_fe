@@ -11,7 +11,6 @@ import {
   STATE_NAMES,
   getDistrict,
   getDistrictNames,
-  getPayerZones,
   getTaluk,
   getTalukNames,
 } from "./geo";
@@ -28,7 +27,6 @@ export function SastSubmissionAddressSection({
 
   const districtOptions = getDistrictNames(selectedState);
   const talukOptions = getTalukNames(selectedState, selectedDistrict);
-  const payerZoneOptions = getPayerZones(selectedState);
 
   const handleStateChange = () => {
     form.setValue("payload.patient_district", "");
@@ -37,8 +35,6 @@ export function SastSubmissionAddressSection({
     form.setValue("payload.patient_taluk", "");
     form.setValue("payload.taluk_name", "");
     form.setValue("payload.taluk_code", "");
-    // Payer zone is scoped to the state, so clear any stale selection.
-    form.setValue("payload.payer_zone", "");
   };
 
   const handleDistrictChange = (districtName: string) => {
@@ -97,16 +93,11 @@ export function SastSubmissionAddressSection({
             placeholder="Select state"
             onSelect={handleStateChange}
           />
-          <SastFormSelectField
+          <SastFormTextField
             form={form}
             name="payload.payer_zone"
             label="Payer zone"
             required
-            options={payerZoneOptions}
-            placeholder={
-              selectedState ? "Select payer zone" : "Select a state first"
-            }
-            disabled={!selectedState}
           />
           <SastFormSelectField
             form={form}

@@ -9,7 +9,6 @@ import {
 import {
   CreateSastSubmissionFormValues,
   SAST_CASTE_CHOICES,
-  SAST_FAMILY_TYPE_CHOICES,
   SAST_RELATION_WITH_HEAD_CHOICES,
 } from "./schema";
 
@@ -58,12 +57,11 @@ export function SastSubmissionFamilySection({
             label="Family head DOB"
             type="date"
           />
-          <SastFormSelectField
+          <SastFormTextField
             form={form}
             name="payload.family_type"
             label="Family type"
             required
-            options={SAST_FAMILY_TYPE_CHOICES}
           />
           <SastFormTextField
             form={form}

@@ -84,14 +84,9 @@ export const sastSubmissionPayloadFormSchema = z.object({
   }),
   family_head_name: z.string().min(1, "Family head name is required"),
   payer_zone: z.string().min(1, "Payer zone is required"),
-  family_type: z.enum(SAST_FAMILY_TYPE_CHOICES, {
-    message:
-      "Family Type should be either GENERAL,BPL,APL or MIGRANT LABOUR only.",
-  }),
+  family_type: z.string().min(1, "Family type is required"),
   family_card_type: z.string().min(1, "Family card type is required"),
-  family_card_no: z
-    .string()
-    .regex(/^\d{12}$/, "Please Enter Valid Family Card No of 12 digits."),
+  family_card_no: z.string().min(1, "Family card number is required"),
   caste: z.enum(SAST_CASTE_CHOICES, {
     message: "Caste should be either GENERAL,SC,ST,OBC or OTHER only.",
   }),
@@ -189,14 +184,12 @@ export type SastSubmissionPayloadPrefill = Omit<
   | "upload_file2_file"
   | "photo_file"
   | "gender"
-  | "family_type"
   | "caste"
   | "marital_status"
   | "relation_with_head"
 > & {
   // Dropdown fields start unselected (""), but validation rejects empty values.
   gender: SastSubmissionPayloadFormValues["gender"] | "";
-  family_type: SastSubmissionPayloadFormValues["family_type"] | "";
   caste: SastSubmissionPayloadFormValues["caste"] | "";
   marital_status: SastSubmissionPayloadFormValues["marital_status"] | "";
   relation_with_head: SastSubmissionPayloadFormValues["relation_with_head"] | "";
